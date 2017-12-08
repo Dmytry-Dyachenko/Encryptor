@@ -10,8 +10,9 @@ public class MatrixCreationTest {
     EncryptorImpl encryptor = new EncryptorImpl();
     @Test
     public void testColumnAndRowSize() {
-        List<Integer> sizes = encryptor.getColumnAndRowLength(10);
-        assertEquals(3, sizes.get(0),0.001);
-        assertEquals(4, sizes.get(1),0.001);
+       // List<Integer> sizes = encryptor.getColumnAndRowLength(10);
+        encryptor.encrypt("if man was meant to stay on the ground god would have given us roots");
+        /*assertEquals(3, sizes.get(0),0.001);
+        assertEquals(4, sizes.get(1),0.001);*/
     }
 }

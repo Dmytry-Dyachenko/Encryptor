@@ -2,28 +2,52 @@ package javaclasses.encryptor.impl;
 
 import javaclasses.encryptor.Encryptor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Collections.sort;
+import static java.util.Collections.unmodifiableList;
 
 public class EncryptorImpl implements Encryptor {
 
     @Override
     public String encrypt(String text) {
-        OutputContext context = new OutputContext();
         TextReader reader = new TextReader(text);
-
-        createEncryptionMatrixForTextWithLength(reader.getTextForEncrypting(), reader.getTextForEncryptionLength());
-
-
-        return context.getEncryptedString().toString();
+        return getEncryptedString(reader);
     }
 
-    private Map<Integer, String> createEncryptionMatrixForTextWithLength(String textForEncrypting, int textForEncryptionLength) {
+    private String getEncryptedString(TextReader reader) {
+        final StringBuilder stringBuilder = new StringBuilder();
+        final List<Integer> columnAndRowSize = getColumnAndRowLength(reader.getTextForEncryptionLength());
+        final int columnSize = columnAndRowSize.get(0);
+        final int rowSize = columnAndRowSize.get(1);
+        final char[][] matrixWithSymbols = getEncryptionMatrixForTextWithLength(reader, columnAndRowSize);
 
-        Map<Integer, String> encryptionMatrix = new HashMap<>();
-        final List<Integer> columnAndRowSize = getColumnAndRowLength(textForEncryptionLength);
-
-        return null;
+        for (int i = 0, n = 0; i < rowSize; i++, n++) {
+            for (int j = 0; j < columnSize; j++, n++) {
+                stringBuilder.append(matrixWithSymbols[j][i]);
+            }
+            stringBuilder.append(" ");
+        }
+        return stringBuilder.toString();
     }
+
+
+    private char[][] getEncryptionMatrixForTextWithLength(TextReader reader, List<Integer> columnAndRowSize) {
+
+        final int columnSize = columnAndRowSize.get(0);
+        final int rowSize = columnAndRowSize.get(1);
+        char[][] matrixSymbolsForEncryption = new char[columnSize][rowSize];
+        final char[] symbolsForEncryption = reader.getTextForEncrypting().toCharArray();
+
+        for (int i = 0, n = 0; i < columnSize ; i++) {
+            for (int j = 0; j < rowSize && n < symbolsForEncryption.length; j++, n++) {
+                matrixSymbolsForEncryption[i][j] = symbolsForEncryption[n];
+            }
+        }
+        return matrixSymbolsForEncryption;
+    }
+
 
     public List<Integer> getColumnAndRowLength(int textForEncryptionLength) {
         final int columnSize = (int) Math.sqrt(textForEncryptionLength);
@@ -34,8 +58,8 @@ public class EncryptorImpl implements Encryptor {
         final List<Integer> columnAndRowSize = new ArrayList<>();
         columnAndRowSize.add(columnSize);
         columnAndRowSize.add(rowSize);
-        Collections.sort(columnAndRowSize);
-        return columnAndRowSize;
+        sort(columnAndRowSize);
+        return unmodifiableList(columnAndRowSize);
     }
 
 
