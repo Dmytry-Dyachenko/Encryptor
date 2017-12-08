@@ -17,22 +17,28 @@ public class EncryptorImpl implements Encryptor {
     }
 
     private String getEncryptedString(TextReader reader) {
-        final StringBuilder stringBuilder = new StringBuilder();
+        final StringBuilder encryptedString = new StringBuilder();
         final List<Integer> columnAndRowSize = getColumnAndRowLength(reader.getTextForEncryptionLength());
         final int columnSize = columnAndRowSize.get(0);
         final int rowSize = columnAndRowSize.get(1);
-        final char[][] matrixWithSymbols = getEncryptionMatrixForTextWithLength(reader, columnAndRowSize);
+        final char[][] matrixWithSymbolsForEncryption = getEncryptionMatrixForTextWithLength(reader, columnAndRowSize);
 
         for (int i = 0, n = 0; i < rowSize; i++, n++) {
             for (int j = 0; j < columnSize; j++, n++) {
-                stringBuilder.append(matrixWithSymbols[j][i]);
+                encryptedString.append(matrixWithSymbolsForEncryption[j][i]);
             }
-            stringBuilder.append(" ");
+            encryptedString.append(" ");
         }
-        return stringBuilder.toString();
+        return encryptedString.toString();
     }
 
-
+    /**
+     * Create the matrix with symbol for encryption.
+     *
+     * @param reader           the prepared text for encrypting
+     * @param columnAndRowSize size the matrix for encrypting.
+     * @return encryption matrix.
+     */
     private char[][] getEncryptionMatrixForTextWithLength(TextReader reader, List<Integer> columnAndRowSize) {
 
         final int columnSize = columnAndRowSize.get(0);
@@ -40,7 +46,7 @@ public class EncryptorImpl implements Encryptor {
         char[][] matrixSymbolsForEncryption = new char[columnSize][rowSize];
         final char[] symbolsForEncryption = reader.getTextForEncrypting().toCharArray();
 
-        for (int i = 0, n = 0; i < columnSize ; i++) {
+        for (int i = 0, n = 0; i < columnSize; i++) {
             for (int j = 0; j < rowSize && n < symbolsForEncryption.length; j++, n++) {
                 matrixSymbolsForEncryption[i][j] = symbolsForEncryption[n];
             }
